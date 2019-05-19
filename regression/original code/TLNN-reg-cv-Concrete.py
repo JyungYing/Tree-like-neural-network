@@ -1,15 +1,15 @@
 #=======================================
-## Tree-like neural network - Concrete (Cross_validation)
+## Tree-like neural network - Concrete
 #=======================================
 
 ###################
 
-# Decision tree: R codes: Concrete Compressive Strength dataset.
+# Decision tree: R codes: Concrete dataset.
 
 #----------------------------------------
-# Load the Concrete Compressive Strength dataset.
+# Load the Concrete dataset.
 
-data_original = read.table("D:/Li-Chun-Ying/Data-Sets/regression/CONCRETE-Training-Data.txt", header = FALSE) 
+data_original = read.table("C:/Users/jghsieh/Desktop/Li-Chun-Ying/Data-Sets/regression/CONCRETE-Training-Data.txt", header = FALSE) 
 
 str(data_original)
 
@@ -45,7 +45,7 @@ concrete_ctree
 
 ###################
 
-# Neural Network: Python codes: Australian
+# Neural Network: Python codes: Concrete
 
 #----------------------------------------
 # Change the current working directory to the specified path.
@@ -70,25 +70,24 @@ set_random_seed(seed)
 import numpy as np
 import matplotlib.pyplot as plt
 from keras.models import Model, load_model
-from keras.layers import Input, Dense, Activation, concatenate
-#from keras.layers import add, subtract, multiply, average, maximum, concatenate, dot
+from keras.layers import Input, Dense, concatenate, Dropout
 
 #----------------------------------------
-# Load the Concrete Compressive Strength dataset.
+# Load the Concrete dataset.
 
 dataset = np.loadtxt("CONCRETE-Training-Data.txt")
 
-type(dataset)
+print(type(dataset))
 
-dataset.shape
+print(dataset.shape)
 
 x_group = [[7], [0], [7], [3], [0], [0], [3]]
 
 X = dataset[:, 0:8]
 Y = dataset[:, 8]
 
-X.shape
-Y.shape
+print(X.shape)
+print(Y.shape)
 
 X1 = dataset[:, x_group[0]]
 X2 = dataset[:, x_group[1]]
@@ -99,65 +98,71 @@ X6 = dataset[:, x_group[5]]
 X7 = dataset[:, x_group[6]]
 Y = dataset[:, 8]
 
-X1.shape; X2.shape; X3.shape; X4.shape; X5.shape; X6.shape; X7.shape
-Y.shape
+print(X1.shape)
+print(X2.shape)
+print(X3.shape)
+print(X4.shape)
+print(X5.shape)
+print(X6.shape)
+print(X7.shape)
+print(Y.shape)
 
 #----------------------------------------
 # Standardize the input and output data.
 
 X_sample_mean = np.mean(X, axis = 0)
-np.round(X_sample_mean, 4)
+print(np.round(X_sample_mean, 4))
 
 X_sample_std = np.std(X, axis = 0, ddof = 1)
-np.round(X_sample_std, 4)
+print(np.round(X_sample_std, 4))
 
 X1_sample_mean = X_sample_mean[x_group[0]]
-np.round(X1_sample_mean, 4)
+print(np.round(X1_sample_mean, 4))
 
 X1_sample_std = X_sample_std[x_group[0]]
-np.round(X1_sample_std, 4)
+print(np.round(X1_sample_std, 4))
 
 X2_sample_mean = X_sample_mean[x_group[1]]
-np.round(X2_sample_mean, 4)
+print(np.round(X2_sample_mean, 4))
 
 X2_sample_std = X_sample_std[x_group[1]]
-np.round(X2_sample_std, 4)
+print(np.round(X2_sample_std, 4))
 
 X3_sample_mean = X_sample_mean[x_group[2]]
-np.round(X3_sample_mean, 4)
+print(np.round(X3_sample_mean, 4))
 
 X3_sample_std = X_sample_std[x_group[2]]
-np.round(X3_sample_std, 4)
+print(np.round(X3_sample_std, 4))
 
 X4_sample_mean = X_sample_mean[x_group[3]]
-np.round(X4_sample_mean, 4)
+print(np.round(X4_sample_mean, 4))
 
 X4_sample_std = X_sample_std[x_group[3]]
-np.round(X4_sample_std, 4)
+print(np.round(X4_sample_std, 4))
 
 X5_sample_mean = X_sample_mean[x_group[4]]
-np.round(X5_sample_mean, 4)
+print(np.round(X5_sample_mean, 4))
 
 X5_sample_std = X_sample_std[x_group[4]]
-np.round(X5_sample_std, 4)
+print(np.round(X5_sample_std, 4))
 
 X6_sample_mean = X_sample_mean[x_group[5]]
-np.round(X6_sample_mean, 4)
+print(np.round(X6_sample_mean, 4))
 
 X6_sample_std = X_sample_std[x_group[5]]
-np.round(X6_sample_std, 4)
+print(np.round(X6_sample_std, 4))
 
 X7_sample_mean = X_sample_mean[x_group[6]]
-np.round(X7_sample_mean, 4)
+print(np.round(X7_sample_mean, 4))
 
 X7_sample_std = X_sample_std[x_group[6]]
-np.round(X7_sample_std, 4)
+print(np.round(X7_sample_std, 4))
 
 Y_sample_mean = np.mean(Y, axis = 0)
-np.round(Y_sample_mean, 4)
+print(np.round(Y_sample_mean, 4))
 
 Y_sample_std = np.std(Y, axis = 0, ddof = 1)
-np.round(Y_sample_std, 4)
+print(np.round(Y_sample_std, 4))
 
 standardize = lambda x: (x - np.mean(x, axis = 0)) / np.std(x, axis = 0, ddof = 1)
 
@@ -171,31 +176,31 @@ X5_train = X_train[:, x_group[4]]
 X6_train = X_train[:, x_group[5]]
 X7_train = X_train[:, x_group[6]]
 
-np.round(np.mean(X1_train, axis = 0), 4)
-np.round(np.std(X1_train, axis = 0, ddof = 1), 4)
+print(np.round(np.mean(X1_train, axis = 0), 4))
+print(np.round(np.std(X1_train, axis = 0, ddof = 1), 4))
 
-np.round(np.mean(X2_train, axis = 0), 4)
-np.round(np.std(X2_train, axis = 0, ddof = 1), 4)
+print(np.round(np.mean(X2_train, axis = 0), 4))
+print(np.round(np.std(X2_train, axis = 0, ddof = 1), 4))
 
-np.round(np.mean(X3_train, axis = 0), 4)
-np.round(np.std(X3_train, axis = 0, ddof = 1), 4)
+print(np.round(np.mean(X3_train, axis = 0), 4))
+print(np.round(np.std(X3_train, axis = 0, ddof = 1), 4))
 
-np.round(np.mean(X4_train, axis = 0), 4)
-np.round(np.std(X4_train, axis = 0, ddof = 1), 4)
+print(np.round(np.mean(X4_train, axis = 0), 4))
+print(np.round(np.std(X4_train, axis = 0, ddof = 1), 4))
 
-np.round(np.mean(X5_train, axis = 0), 4)
-np.round(np.std(X5_train, axis = 0, ddof = 1), 4)
+print(np.round(np.mean(X5_train, axis = 0), 4))
+print(np.round(np.std(X5_train, axis = 0, ddof = 1), 4))
 
-np.round(np.mean(X6_train, axis = 0), 4)
-np.round(np.std(X6_train, axis = 0, ddof = 1), 4)
+print(np.round(np.mean(X6_train, axis = 0), 4))
+print(np.round(np.std(X6_train, axis = 0, ddof = 1), 4))
 
-np.round(np.mean(X7_train, axis = 0), 4)
-np.round(np.std(X7_train, axis = 0, ddof = 1), 4)
+print(np.round(np.mean(X7_train, axis = 0), 4))
+print(np.round(np.std(X7_train, axis = 0, ddof = 1), 4))
 
 Y_train = standardize(Y)
 
-np.round(np.mean(Y_train, axis = 0), 4)
-np.round(np.std(Y_train, axis = 0, ddof = 1), 4)
+print(np.round(np.mean(Y_train, axis = 0), 4))
+print(np.round(np.std(Y_train, axis = 0, ddof = 1), 4))
 
 #----------------------------------------
 # Define 10-fold cross validation test index sets.
@@ -290,8 +295,6 @@ for k in range(fold_num):
     #
     model = Model(inputs = [input_g1, input_g2, input_g3, input_g6, input_g9, input_g10, input_g13], 
 		    outputs = response)
-    #
-    #model.summary()
     # Compile the model.
     model.compile(loss = 'mse', optimizer = 'adam', metrics = ['mae'])
     # Select index sets.
@@ -301,15 +304,17 @@ for k in range(fold_num):
     # Fit the model.
     history = model.fit([X1_train[train_index], X2_train[train_index], X3_train[train_index]
     , X4_train[train_index], X5_train[train_index], X6_train[train_index]
-    , X7_train[train_index]], Y_train[train_index], validation_split = 0.2, epochs = 1000, batch_size = 20, verbose = 2)
+    , X7_train[train_index]], Y_train[train_index], validation_split = 0.2, epochs = 1000, batch_size = 20, verbose = 1)
     # Evaluate the model.
     scores = model.evaluate([X1_train[test_index], X2_train[test_index], X3_train[test_index]
     , X4_train[test_index], X5_train[test_index], X6_train[test_index], X7_train[test_index]]
-    , Y_train[test_index], verbose = 0)
+    , Y_train[test_index], verbose = 1)
     print("%s: %.4f" % (model.metrics_names[0], scores[0]))
     print("%s: %.4f" % (model.metrics_names[1], scores[1]))
     cv_mse.append(scores[0])
     cv_mae.append(scores[1])
+	
+model.summary()
 
 print("%.4f (+/- %.4f)" % (np.mean(cv_mse), np.std(cv_mse)))
 print("%.4f (+/- %.4f)" % (np.median(cv_mse), np.std(cv_mse)))
@@ -317,16 +322,21 @@ print("%.4f (+/- %.4f)" % (np.median(cv_mse), np.std(cv_mse)))
 print("%.4f (+/- %.4f)" % (np.mean(cv_mae), np.std(cv_mae)))
 print("%.4f (+/- %.4f)" % (np.median(cv_mae), np.std(cv_mae)))
 
-result = {'history': history.history, 'loss_metric': loss_metric}
+#----------------------------------------
+# Predict
+
+model.predict([X1_train, X2_train, X3_train, X4_train, X5_train, X6_train, X7_train], verbose = 1)
+
+result = {'history': history.history, 'loss_metric': scores}
 
 #----------------------------------------
 # Save the result to NPZ file
 
-np.savez('D:\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Regression\\Tree_like_nn_cv_result(Concrete)', **result)
+np.savez('C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Regression\\Concrete\\Tree_like_nn_cv_result(Concrete)', **result)
 
 # Load the result of NPZ file
 
-result = np.load('D:\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Regression\\Tree_like_nn_cv_result(Concrete).npz')
+result = np.load('C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Regression\\Concrete\\Tree_like_nn_cv_result(Concrete).npz')
 
 result.files
 
@@ -338,18 +348,18 @@ result['loss_metric']
 
 from keras.utils import plot_model
 
-plot_model(model, to_file = 'TLNN_concrete_model0.png')
-plot_model(model, show_shapes = True, to_file = 'TLNN_concrete_model1.png')
+plot_model(model, to_file = 'C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Figures\\Tree-like\\Regression\\Concrete\\TLNN_concrete_model0.png')
+plot_model(model, show_shapes = True, to_file = 'C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Figures\\Tree-like\\Regression\\Concrete\\TLNN_concrete_model1.png')
 
 #----------------------------------------
 # Save the model to H5 file
 
-file_path_hdf5 = 'D:\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Regression\\Tree_like_nn_cv(Concrete).h5'
+file_path_hdf5 = 'C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Regression\\Concrete\\Tree_like_nn_cv(Concrete).h5'
 model.save(file_path_hdf5)
 
 # Load model of H5 file
 
-file_path_hdf5 = 'D:\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Regression\\Tree_like_nn_cv(Concrete).h5'
+file_path_hdf5 = 'C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Regression\\Concrete\\Tree_like_nn_cv(Concrete).h5'
 loaded_model = load_model(file_path_hdf5)
 
 #----------------------------------------
@@ -360,16 +370,14 @@ history.history.keys()
 #----------------------------------------
 # Summarize history for loss.
 
-plt.ion()
-
 plt.figure('TLNN Concrete loss', figsize = (4.8, 4.0))
 plt.plot(history.history['loss'], "r-")
 plt.plot(history.history['val_loss'], "b--")
-plt.title('Training/validating loss')
+plt.title('TLNN Concrete' + '\n' + 'Training/validating loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['training loss', 'validating loss'], loc = "best", frameon = False)
-#plt.show()
+plt.show()
 
 #----------------------------------------
 # Summarize history for metric.
@@ -377,11 +385,11 @@ plt.legend(['training loss', 'validating loss'], loc = "best", frameon = False)
 plt.figure('TLNN Concrete metric', figsize = (4.8, 4.0))
 plt.plot(history.history['mean_absolute_error'], "r-")
 plt.plot(history.history['val_mean_absolute_error'], "b--")
-plt.title('Training/validating metric')
+plt.title('TLNN Concrete' + '\n' + 'Training/validating metric')
 plt.ylabel('mae')
 plt.xlabel('epoch')
 plt.legend(['training metric', 'validating metric'], loc = "best", frameon = False)
-#plt.show()
+plt.show()
 
 #----------------------------------------
 # Plot the observed and fitted response values.
@@ -389,18 +397,17 @@ plt.legend(['training metric', 'validating metric'], loc = "best", frameon = Fal
 fitted = model.predict([X1_train, X2_train, X3_train, X4_train, X5_train, X6_train, X7_train])  # Here, this is used to compute fitted response values.
 fitted = fitted[:, 0]
 
-fitted.shape
-Y_train.shape
+print(fitted.shape)
+print(Y_train.shape)
 
 all = np.concatenate((Y_train, fitted))
 draw_min = np.floor(np.min(all))
 draw_max = np.ceil(np.max(all))
 
 plt.figure('TLNN Concrete', figsize = (4.8, 4.0))
-#plt.plot(Y_train, fitted, "wo", markersize = 2, markeredgecolor = "black")
 plt.plot(fitted, Y_train, "wo", markersize = 2, markeredgecolor = "black")
 plt.plot([draw_min, draw_max], [draw_min, draw_max], '-', linewidth = 1, color = 'red')
-plt.title('Observed versus fitted values')
+plt.title('TLNN Concrete' + '\n' + 'Observed versus fitted values')
 plt.ylabel('observed values')
 plt.xlabel('fitted values')
-#plt.show()
+plt.show()
