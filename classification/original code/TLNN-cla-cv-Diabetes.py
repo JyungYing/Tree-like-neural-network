@@ -4,12 +4,11 @@
 
 ###################
 
-# Decision tree: R codes: Diabetes Compressive Strength dataset.
+# Decision tree: R codes: Diabetes dataset.
 
 #----------------------------------------
-# Load the Diabetes Compressive Strength dataset.
+# Load the Diabetes dataset.
 
-#data_original = read.table("D:/Li-Chun-Ying/Data-Sets/classification/Diabetes-Data.txt", header = FALSE)
 data_original = read.table("C:/Users/jghsieh/Desktop/Li-Chun-Ying/Data-Sets/classification/Diabetes-Data.txt", header = FALSE)
 
 data_original[, 9] = factor(data_original[,9])
@@ -47,7 +46,7 @@ diabetes_ctree
 
 ###################  
 
-# Neural Network: Python codes: Diabetes
+# Neural Network: Python codes: Diabetes dataset
 
 #----------------------------------------
 # Change the current working directory to the specified path.
@@ -72,66 +71,68 @@ set_random_seed(seed)
 import numpy as np
 import matplotlib.pyplot as plt
 from keras.models import Model, load_model
-from keras.layers import Input, Dense, Activation, concatenate
-#from keras.layers import add, subtract, multiply, average, maximum, Lambda, dot
+from keras.layers import Input, Dense, concatenate, Dropout
 
 #----------------------------------------
-# Load the Diabetes Compressive Strength dataset.
+# Load the Diabetes dataset.
 
 dataset = np.loadtxt("Diabetes-Data.txt")
 
-type(dataset)
+print(type(dataset))
 
-dataset.shape
+print(dataset.shape)
 
 x_group = [[1], [5], [1], [4]]
 
 X = dataset[:, 0:8]
 Y = dataset[:, 8]
 
-X.shape
-Y.shape
+print(X.shape)
+print(Y.shape)
 
 X1 = dataset[:, x_group[0]]
 X2 = dataset[:, x_group[1]]
 X3 = dataset[:, x_group[2]]
 X4 = dataset[:, x_group[3]]
 
-X1.shape; X2.shape; X3.shape; X4.shape
-Y.shape
+print(X1.shape)
+print(X2.shape)
+print(X3.shape)
+print(X4.shape)
+print(Y.shape)
 
 #----------------------------------------
 # Standardize the input and output data.
 
 X_sample_mean = np.mean(X, axis = 0)
-np.round(X_sample_mean, 4)
+print(np.round(X_sample_mean, 4))
 
 X_sample_std = np.std(X, axis = 0, ddof = 1)
-np.round(X_sample_std, 4)
+print(np.round(X_sample_std, 4))
 
 X1_sample_mean = X_sample_mean[x_group[0]]
-np.round(X1_sample_mean, 4)
+print(np.round(X1_sample_mean, 4))
 
 X1_sample_std = X_sample_std[x_group[0]]
-np.round(X1_sample_std, 4)
+print(np.round(X1_sample_std, 4))
 
 X2_sample_mean = X_sample_mean[x_group[1]]
-np.round(X2_sample_mean, 4)
+print(np.round(X2_sample_mean, 4))
 
 X2_sample_std = X_sample_std[x_group[1]]
-np.round(X2_sample_std, 4)
+print(np.round(X2_sample_std, 4))
 
 X3_sample_mean = X_sample_mean[x_group[2]]
-np.round(X3_sample_mean, 4)
+print(np.round(X3_sample_mean, 4))
 
 X3_sample_std = X_sample_std[x_group[2]]
-np.round(X3_sample_std, 4)
+print(np.round(X3_sample_std, 4))
 
 X4_sample_mean = X_sample_mean[x_group[3]]
-np.round(X4_sample_mean, 4)
+print(np.round(X4_sample_mean, 4))
 
 X4_sample_std = X_sample_std[x_group[3]]
-np.round(X4_sample_std, 4)
+print(np.round(X4_sample_std, 4))
 
 standardize = lambda x: (x - np.mean(x, axis = 0)) / np.std(x, axis = 0, ddof = 1)
 
@@ -142,17 +143,17 @@ X2_train = X_train[:, x_group[1]]
 X3_train = X_train[:, x_group[2]]
 X4_train = X_train[:, x_group[3]]
 
-np.round(np.mean(X1_train, axis = 0), 4)
-np.round(np.std(X1_train, axis = 0, ddof = 1), 4)
+print(np.round(np.mean(X1_train, axis = 0), 4))
+print(np.round(np.std(X1_train, axis = 0, ddof = 1), 4))
 
-np.round(np.mean(X2_train, axis = 0), 4)
-np.round(np.std(X2_train, axis = 0, ddof = 1), 4)
+print(np.round(np.mean(X2_train, axis = 0), 4))
+print(np.round(np.std(X2_train, axis = 0, ddof = 1), 4))
 
-np.round(np.mean(X3_train, axis = 0), 4)
-np.round(np.std(X3_train, axis = 0, ddof = 1), 4)
+print(np.round(np.mean(X3_train, axis = 0), 4))
+print(np.round(np.std(X3_train, axis = 0, ddof = 1), 4))
 
-np.round(np.mean(X4_train, axis = 0), 4)
-np.round(np.std(X4_train, axis = 0, ddof = 1), 4)
+print(np.round(np.mean(X4_train, axis = 0), 4))
+print(np.round(np.std(X4_train, axis = 0, ddof = 1), 4))
 
 Y_train = Y
 
@@ -183,7 +184,7 @@ cv_bc = []
 cv_acc = []
 
 for k in range(fold_num):
-    # Build the tree like nn model
+    # Build the tree-like nn model
     input_g1 = Input(shape = (1,))
     x1 = input_g1
     t1 = Dense(units = 3, kernel_initializer = "uniform", activation = "relu")(x1)
@@ -223,8 +224,6 @@ for k in range(fold_num):
     response = y_final
     #
     model = Model(inputs = [input_g1, input_g3, input_g4, input_g6], outputs = response)
-    #
-    #model.summary()
     # Compile the model.
     model.compile(loss = 'binary_crossentropy', optimizer = 'adam', metrics = ['accuracy'])
     # Select index sets.
@@ -233,31 +232,38 @@ for k in range(fold_num):
     train_index = np.delete(index, seq_index)
     # Fit the model.
     history = model.fit([X1_train[train_index], X2_train[train_index], X3_train[train_index], X4_train[train_index]]
-                        , Y_train[train_index], validation_split = 0.2, epochs = 1000, batch_size = 40, verbose = 2)
+                        , Y_train[train_index], validation_split = 0.2, epochs = 1000, batch_size = 40, verbose = 1)
     # Evaluate the model.
     scores = model.evaluate([X1_train[test_index], X2_train[test_index], X3_train[test_index], X4_train[test_index]]
-                            , Y_train[test_index], verbose = 0)
+                            , Y_train[test_index], verbose = 1)
     print("%s: %.4f" % (model.metrics_names[0], scores[0]))
     print("%s: %.4f" % (model.metrics_names[1], scores[1]))
     cv_bc.append(scores[0])
     cv_acc.append(scores[1])
 
+model.summary()	
+	
 print("%.4f (+/- %.4f)" % (np.mean(cv_bc), np.std(cv_bc)))
 print("%.4f (+/- %.4f)" % (np.median(cv_bc), np.std(cv_bc)))
 
 print("%.4f (+/- %.4f)" % (np.mean(cv_acc), np.std(cv_acc)))
 print("%.4f (+/- %.4f)" % (np.median(cv_acc), np.std(cv_acc)))
 
+#----------------------------------------
+# Predict
+
+model.predict([X1_train, X2_train, X3_train, X4_train], verbose = 1)
+
 result = {'history': history.history, 'loss_metric': scores}
 
 #----------------------------------------
 # Save the result to NPZ file
 
-np.savez('D:\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Tree_like_nn_cv_result(Diabetes)', **result)
+np.savez('C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Diabetes\\Tree_like_nn_cv_result(Diabetes)', **result)
 
 # Load the result of NPZ file
 
-result = np.load('D:\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Tree_like_nn_cv_result(Diabetes).npz')
+result = np.load('C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Tree_like_nn_cv_result(Diabetes).npz')
 
 result.files
 
@@ -269,18 +275,18 @@ result['loss_metric']
 
 from keras.utils import plot_model
 
-plot_model(model, to_file = 'TLNN_diabetes_model0.png')
-plot_model(model, show_shapes = True, to_file = 'TLNN_diabetes_model1.png')
+plot_model(model, to_file = 'C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Figures\\Tree-like\\Classification\\Diabetes\\TLNN_diabetes_model0.png')
+plot_model(model, show_shapes = True, to_file = 'C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Figures\\Tree-like\\Classification\\Diabetes\TLNN_diabetes_model1.png')
 
 #----------------------------------------
 # Save the model to H5 file
 
-file_path_hdf5 = 'D:\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Tree_like_nn_cv(Diabetes).h5'
+file_path_hdf5 = 'C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Diabetes\\Tree_like_nn_cv(Diabetes).h5'
 model.save(file_path_hdf5)
 
 # Load model of H5 file
 
-file_path_hdf5 = 'D:\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Tree_like_nn_cv(Diabetes).h5'
+file_path_hdf5 = 'C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Diabetes\\Tree_like_nn_cv(Diabetes).h5'
 loaded_model = load_model(file_path_hdf5)
 
 #----------------------------------------
@@ -291,27 +297,25 @@ history.history.keys()
 #----------------------------------------
 # Summarize history for loss.
 
-plt.ion()
-
-plt.figure('Figure Diabetes loss', figsize = (4.8, 4.0))
+plt.figure('TLNN Diabetes loss', figsize = (4.8, 4.0))
 plt.plot(history.history['loss'], "r-")
 plt.plot(history.history['val_loss'], "b--")
-plt.title('Training/validating loss')
+plt.title('TLNN Diabetes' + '\n' + 'Training/validating loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['training loss', 'validating loss'], loc = "best", frameon = False)
-#plt.show()
+plt.show()
 
 #----------------------------------------
 # Summarize history for metric.
 
-plt.figure('Figure Diabetes metric', figsize = (4.8, 4.0))
+plt.figure('TLNN Diabetes metric', figsize = (4.8, 4.0))
 plt.plot(history.history['acc'], "r-")
 plt.plot(history.history['val_acc'], "b--")
-plt.title('Training/validating metric')
+plt.title('TLNN Diabetes' + '\n' + 'Training/validating metric')
 plt.ylabel('acc')
 plt.xlabel('epoch')
 plt.legend(['training metric', 'validating metric'], loc = "best", frameon = False)
-#plt.show()
+plt.show()
 
 ###################
