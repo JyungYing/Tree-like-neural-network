@@ -4,12 +4,12 @@
 
 ###################
 
-# Decision tree: R codes: Haberman Compressive Strength dataset.
+# Decision tree: R codes: Haberman dataset.
 
 #----------------------------------------
-# Load the Haberman Compressive Strength dataset.
+# Load the Haberman dataset.
 
-data_original = read.table("D:/Li-Chun-Ying/Data-Sets/classification/Haberman-Survival-Data.txt", header = FALSE, sep = ',') 
+data_original = read.table("C:/Users/jghsieh/Desktop/Li-Chun-Ying/Data-Sets/classification/Haberman-Survival-Data.txt", header = FALSE, sep = ',') 
 
 index = which(data_original[,4] == 2)
 
@@ -54,7 +54,7 @@ plot(haberman_ctree, type = 'simple')
 
 import os
 
-mywd = "D:\\Li-Chun-Ying\\Data-Sets\\classification"
+mywd = "C:/Users/jghsieh/Desktop/Li-Chun-Ying/Data-Sets/classification"
 os.chdir(mywd)
 os.getcwd()
 
@@ -72,17 +72,16 @@ set_random_seed(seed)
 import numpy as np
 import matplotlib.pyplot as plt
 from keras.models import Model, load_model
-from keras.layers import Input, Dense, Activation, concatenate, Dropout
-#from keras.layers import add, subtract, multiply, average, maximum, Lambda, dot
+from keras.layers import Input, Dense, concatenate, Dropout
 
 #----------------------------------------
-# Load the Haberman Compressive Strength dataset.
+# Load the Haberman dataset.
 
 dataset = np.loadtxt("Haberman-Survival-Data.txt", delimiter = ",")
 
-type(dataset)
+print(type(dataset))
 
-dataset.shape
+print(dataset.shape)
 
 which = lambda status: np.arange(len(status))[status]
 
@@ -95,44 +94,46 @@ x_group = [[2], [0], [1]]
 X = dataset[:, 0:3]
 Y = dataset[:, 3]
 
-np.unique(Y)
+print(np.unique(Y))
 
-X.shape
-Y.shape
+print(X.shape)
+print(Y.shape)
 
 X1 = dataset[:, x_group[0]]
 X2 = dataset[:, x_group[1]]
 X3 = dataset[:, x_group[2]]
 
-X1.shape; X2.shape; X3.shape
-Y.shape
+print(X1.shape)
+print(X2.shape)
+print(X3.shape)
+print(Y.shape)
 
 #----------------------------------------
 # Standardize the input and output data.
 
 X_sample_mean = np.mean(X, axis = 0)
-np.round(X_sample_mean, 4)
+print(np.round(X_sample_mean, 4))
 
 X_sample_std = np.std(X, axis = 0, ddof = 1)
-np.round(X_sample_std, 4)
+print(np.round(X_sample_std, 4))
 
 X1_sample_mean = X_sample_mean[x_group[0]]
-np.round(X1_sample_mean, 4)
+print(np.round(X1_sample_mean, 4))
 
 X1_sample_std = X_sample_std[x_group[0]]
-np.round(X1_sample_std, 4)
+print(np.round(X1_sample_std, 4))
 
 X2_sample_mean = X_sample_mean[x_group[1]]
-np.round(X2_sample_mean, 4)
+print(np.round(X2_sample_mean, 4))
 
 X2_sample_std = X_sample_std[x_group[1]]
-np.round(X2_sample_std, 4)
+print(np.round(X2_sample_std, 4))
 
 X3_sample_mean = X_sample_mean[x_group[2]]
-np.round(X3_sample_mean, 4)
+print(np.round(X3_sample_mean, 4))
 
 X3_sample_std = X_sample_std[x_group[2]]
-np.round(X3_sample_std, 4)
+print(np.round(X3_sample_std, 4))
 
 standardize = lambda x: (x - np.mean(x, axis = 0)) / np.std(x, axis = 0, ddof = 1)
 
@@ -142,14 +143,14 @@ X1_train = X_train[:, x_group[0]]
 X2_train = X_train[:, x_group[1]]
 X3_train = X_train[:, x_group[2]]
 
-np.round(np.mean(X1_train, axis = 0), 4)
-np.round(np.std(X1_train, axis = 0, ddof = 1), 4)
+print(np.round(np.mean(X1_train, axis = 0), 4))
+print(np.round(np.std(X1_train, axis = 0, ddof = 1), 4))
 
-np.round(np.mean(X2_train, axis = 0), 4)
-np.round(np.std(X2_train, axis = 0, ddof = 1), 4)
+print(np.round(np.mean(X2_train, axis = 0), 4))
+print(np.round(np.std(X2_train, axis = 0, ddof = 1), 4))
 
-np.round(np.mean(X3_train, axis = 0), 4)
-np.round(np.std(X3_train, axis = 0, ddof = 1), 4)
+print(np.round(np.mean(X3_train, axis = 0), 4))
+print(np.round(np.std(X3_train, axis = 0, ddof = 1), 4))
 
 Y_train = Y
 
@@ -212,8 +213,6 @@ for k in range(fold_num):
     response = y_final
     #
     model = Model(inputs = [input_g1, input_g2, input_g3], outputs = response)
-    #
-    #model.summary()
     # Compile the model.
     model.compile(loss = 'binary_crossentropy', optimizer = 'adam', metrics = ['accuracy'])
     # Select index sets.
@@ -222,14 +221,16 @@ for k in range(fold_num):
     train_index = np.delete(index, seq_index)
     # Fit the model.
     history = model.fit([X1_train[train_index], X2_train[train_index], X3_train[train_index]]
-                        , Y_train[train_index], validation_split = 0.2, epochs = 1000, batch_size = 40, verbose = 2)
+                        , Y_train[train_index], validation_split = 0.2, epochs = 1000, batch_size = 40, verbose = 1)
     # Evaluate the model.
     scores = model.evaluate([X1_train[test_index], X2_train[test_index], X3_train[test_index]]
-                            , Y_train[test_index], verbose = 0)
+                            , Y_train[test_index], verbose = 1)
     print("%s: %.4f" % (model.metrics_names[0], scores[0]))
     print("%s: %.4f" % (model.metrics_names[1], scores[1]))
     cv_bc.append(scores[0])
     cv_acc.append(scores[1])
+
+model.summary()	
 
 print("%.4f (+/- %.4f)" % (np.mean(cv_bc), np.std(cv_bc)))
 print("%.4f (+/- %.4f)" % (np.median(cv_bc), np.std(cv_bc)))
@@ -237,24 +238,21 @@ print("%.4f (+/- %.4f)" % (np.median(cv_bc), np.std(cv_bc)))
 print("%.4f (+/- %.4f)" % (np.mean(cv_acc), np.std(cv_acc)))
 print("%.4f (+/- %.4f)" % (np.median(cv_acc), np.std(cv_acc)))
 
-result = {'history': history.history, 'loss_metric': scores}
-
 #----------------------------------------
-# plot the model.
+# Predict
 
-from keras.utils import plot_model
+model.predict([X1_train, X2_train, X3_train], verbose = 1)
 
-plot_model(model, to_file = 'TLNN_Haberman_model0.png')
-plot_model(model, show_shapes = True, to_file = 'TLNN_Haberman_model1.png')
+result = {'history': history.history, 'loss_metric': scores}
 
 #----------------------------------------
 # Save the result to NPZ file
 
-np.savez('D:\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Tree_like_nn_cv_result(Haberman)', **result)
+np.savez('C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Haberman\\Tree_like_nn_cv_result(Haberman)', **result)
 
 # Load the result of NPZ file
 
-result = np.load('D:\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Tree_like_nn_cv_result(Haberman).npz')
+result = np.load('C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Haberman\\Tree_like_nn_cv_result(Haberman).npz')
 
 result.files
 
@@ -262,14 +260,22 @@ result['history']
 result['loss_metric']
 
 #----------------------------------------
+# plot the model.
+
+from keras.utils import plot_model
+
+plot_model(model, to_file = 'C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Figures\\Tree-like\\Classification\\Haberman\\TLNN_Haberman_model0.png')
+plot_model(model, show_shapes = True, to_file = 'C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Figures\\Tree-like\\Classification\\Haberman\\TLNN_Haberman_model1.png')
+
+#----------------------------------------
 # Save the model to H5 file
 
-file_path_hdf5 = 'D:\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Tree_like_nn_cv(Haberman).h5'
+file_path_hdf5 = 'C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Haberman\\Tree_like_nn_cv(Haberman).h5'
 model.save(file_path_hdf5)
 
 # Load model of H5 file
 
-file_path_hdf5 = 'D:\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Tree_like_nn_cv(Haberman).h5'
+file_path_hdf5 = 'C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Haberman\\Tree_like_nn_cv(Haberman).h5'
 loaded_model = load_model(file_path_hdf5)
 
 #----------------------------------------
@@ -280,16 +286,14 @@ history.history.keys()
 #----------------------------------------
 # Summarize history for loss.
 
-plt.ion()
-
 plt.figure('TLNN Haberman loss', figsize = (4.8, 4.0))
 plt.plot(history.history['loss'], "r-")
 plt.plot(history.history['val_loss'], "b--")
-plt.title('TLNN Haberman Training/validating loss')
+plt.title('TLNN Haberman' + '\n' + 'Training/validating loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['training loss', 'validating loss'], loc = "best", frameon = False)
-#plt.show()
+plt.show()
 
 #----------------------------------------
 # Summarize history for metric.
@@ -297,9 +301,9 @@ plt.legend(['training loss', 'validating loss'], loc = "best", frameon = False)
 plt.figure('TLNN Haberman metric', figsize = (4.8, 4.0))
 plt.plot(history.history['acc'], "r-")
 plt.plot(history.history['val_acc'], "b--")
-plt.title('TLNN Haberman Training/validating metric')
+plt.title('TLNN Haberman' + '\n' + 'Training/validating metric')
 plt.ylabel('acc')
 plt.xlabel('epoch')
 plt.legend(['training metric', 'validating metric'], loc = "best", frameon = False)
-#plt.show()
+plt.show()
 
