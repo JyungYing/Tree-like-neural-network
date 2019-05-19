@@ -1,5 +1,5 @@
 #=======================================
-## DNN_cla_Glass-Identification (Cross validation)
+## DNN - Glass-Identification
 #=======================================
 
 # Need compile Create_DNN_model.
@@ -35,21 +35,21 @@ import matplotlib.pyplot as plt
 
 dataset = np.loadtxt("Glass-Identification-Data.txt", delimiter = ",")
 
-type(dataset)
+print(type(dataset))
 
-dataset.shape
+print(dataset.shape)
 
 index = [3, 4, 7, 8]
 
 X = dataset[:, index]
 Y = dataset[:, 10]
 
-X.shape
-Y.shape
+print(X.shape)
+print(Y.shape)
 
 Y = np.array(Y, dtype = int)
 
-np.unique(Y)
+print(np.unique(Y))
 
 #----------------------------------------
 # one-hot encoding of output variable.
@@ -59,24 +59,24 @@ Y_train = np.zeros((len(Y), 7), dtype = int)
 for i in range(len(Y)):
 	Y_train[i, Y[i] - 1] = 1
 
-np.unique(Y_train)
+print(np.unique(Y_train))
 
 
 #----------------------------------------
 # Standardize the input data.
 
 X_sample_mean = np.mean(X, axis = 0)
-np.round(X_sample_mean, 4)
+print(np.round(X_sample_mean, 4))
 
 X_sample_std = np.std(X, axis = 0, ddof = 1)
-np.round(X_sample_std, 4)
+print(np.round(X_sample_std, 4))
 
 standardize = lambda x: (x - np.mean(x, axis = 0)) / np.std(x, axis = 0, ddof = 1)
 
 X_train = standardize(X)
 
-np.round(np.mean(X_train, axis = 0), 4)
-np.round(np.std(X_train, axis = 0, ddof = 1), 4)
+print(np.round(np.mean(X_train, axis = 0), 4))
+print(np.round(np.std(X_train, axis = 0, ddof = 1), 4))
 
 #----------------------------------------
 # Define 10-fold cross validation test index sets.
@@ -109,7 +109,7 @@ nodes = [input_dim, 5, 6, 6, 7]
 	# first component: number of input nodes
 	# last component: number of output nodes
 
-drop = [0, 0.1, 0.2, 0.2]
+drop = [0, 0.1, 0.1, 0.1]
 	# len(dropout_rate) = len(node) - 1
 	# first component: dropout rate for the input layer
 	# other components: dropout rates for the hidden layers
@@ -131,7 +131,6 @@ cv_acc = []
 for k in range(fold_num):
     # Build the model.
     model = create_DNN_model(nodes, drop, kernel, act)
-    #model.summary()
     # Compile the model.
     model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['accuracy'])
     # Select index sets.
@@ -139,32 +138,37 @@ for k in range(fold_num):
     test_index = index[seq_index]
     train_index = np.delete(index, seq_index)
     # Fit the model.
-    history = model.fit(X_train[train_index], Y_train[train_index], validation_split = 0.2, epochs = 1000, batch_size = 20, verbose = 2)
+    history = model.fit(X_train[train_index], Y_train[train_index], validation_split = 0.2, epochs = 1000, batch_size = 20, verbose = 1)
     # Evaluate the model.
-    scores = model.evaluate(X_train[test_index], Y_train[test_index], verbose = 0)
+    scores = model.evaluate(X_train[test_index], Y_train[test_index], verbose = 1)
     print("%s: %.4f" % (model.metrics_names[0], scores[0]))
     print("%s: %.4f" % (model.metrics_names[1], scores[1]))
     cv_cc.append(scores[0])
     cv_acc.append(scores[1])
 
+model.summary()	
+	
 print("%.4f (+/- %.4f)" % (np.mean(cv_cc), np.std(cv_cc)))
 print("%.4f (+/- %.4f)" % (np.median(cv_cc), np.std(cv_cc)))
 
 print("%.4f (+/- %.4f)" % (np.mean(cv_acc), np.std(cv_acc)))
 print("%.4f (+/- %.4f)" % (np.median(cv_acc), np.std(cv_acc)))
 
-model.summary()
+#----------------------------------------
+# Predict
 
-result = {'loss_metric': scores}
+model.predict(X_train, verbose = 1)
+
+result = {'history': history.history, 'loss_metric': scores}
 
 #----------------------------------------
 # Save the result to NPZ file
 
-np.savez('D:\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\DNN_cla_cv_Glass-Identification_result', **result)
+np.savez('C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Glass-Identification\\DNN_cv_result(Glass-Identification)', **result)
 
 # Load the result of NPZ file
 
-result = np.load('D:\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\DNN_cla_cv_Glass-Identification_result.npz')
+result = np.load('C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Glass-Identification\\DDNN_cv_result(Glass-Identification).npz')
 
 result.files
 
@@ -176,18 +180,18 @@ result['scores']
 
 from keras.utils import plot_model
 
-plot_model(model, to_file = 'DNN_glass identification_model0.png')
-plot_model(model, show_shapes = True, to_file = 'DNN_glass identification_model1.png')
+plot_model(model, to_file = 'C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Figures\\Tree-like\\Classification\\Glass-Identification\\DNN_glass identification_model0.png')
+plot_model(model, show_shapes = True, to_file = 'C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Figures\\Tree-like\\Classification\\Glass-Identification\\DNN_glass identification_model1.png')
 
 #----------------------------------------
 # Save the model to H5 file
 
-file_path_hdf5 = 'D:\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\DNN_cla_cv_Glass-Identification.h5'
+file_path_hdf5 = 'C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Glass-Identification\\DNN_cv(Glass-Identification).h5'
 model.save(file_path_hdf5)
 
 # Load model of H5 file
 
-file_path_hdf5 = 'D:\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\DNN_cla_cv_Glass-Identification.h5'
+file_path_hdf5 = 'C:\\Users\\jghsieh\\Desktop\\Li-Chun-Ying\\Keras-Objects\\tree-like-nn\\Classification\\Glass-Identification\\DNN_cv(Glass-Identification).h5'
 loaded_model = load_model(file_path_hdf5)
 
 #----------------------------------------
@@ -198,16 +202,14 @@ history.history.keys()
 #----------------------------------------
 # Summarize history for loss.
 
-plt.ion()
-
 plt.figure('DNN Glass-Identification loss', figsize = (4.8, 4.0))
 plt.plot(history.history['loss'], "r-")
 plt.plot(history.history['val_loss'], "b--")
-plt.title('DNN Glass-Identification Training/validating loss')
+plt.title('DNN Glass-Identification' + '\n' + 'Training/validating loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['training loss', 'validating loss'], loc = "best", frameon = False)
-#plt.show()
+plt.show()
 
 #----------------------------------------
 # Summarize history for metric.
@@ -215,10 +217,10 @@ plt.legend(['training loss', 'validating loss'], loc = "best", frameon = False)
 plt.figure('DNN Glass-Identification metric', figsize = (4.8, 4.0))
 plt.plot(history.history['acc'], "r-")
 plt.plot(history.history['val_acc'], "b--")
-plt.title('DNN Glass-Identification Training/validating metric')
+plt.title('DNN Glass-Identification' + '\n' + 'Training/validating metric')
 plt.ylabel('acc')
 plt.xlabel('epoch')
 plt.legend(['training metric', 'validating metric'], loc = "best", frameon = False)
-#plt.show()
+plt.show()
 
 ###################
